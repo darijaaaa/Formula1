@@ -2,3 +2,6 @@ all*
 *.sqlite
 *cache
 *.csv
+*.png
+*.model
+maturski
