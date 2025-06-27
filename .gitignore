@@ -12,3 +12,5 @@ features3*
 models_camp
 *.pdf
 *.zip
+__pycache__
+radovi
