@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class DnnWOTransformer(nn.Module):
     def __init__(self, embeddings_dict, num_numerical, embedding_dim=8, hidden_dim=136, dropout_p=0.4):
-        super(DnnWOTransformer, self).__init__() 
+        super().__init__()
         #sloj za embedovanje
         self.embeddings = nn.ModuleDict({
             name : nn.Embedding(num_categories, embedding_dim)
@@ -21,10 +21,14 @@ class DnnWOTransformer(nn.Module):
         self.dropout_p = dropout_p
         self.dnn = nn.Sequential(
             nn.Linear(self.dim_features, self.hidden_dim),
-            nn.Tanh(),
+            nn.BatchNorm1d(self.hidden_dim),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim, self.hidden_dim),
-            nn.Tanh(),
+            nn.LeakyReLU(),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim, 1)
         )
@@ -32,7 +36,7 @@ class DnnWOTransformer(nn.Module):
     #ja modelu prosledjujem dict tipa {feature_name : num_of_dif_values_of_feature}, categorijske feature, i numericke feature
     def forward(self, cat_features, num_tensor):
         
-        num_drivers, batch_size  = cat_features[list(cat_features.keys())[0]].shape
+        num_drivers, batch_size, _  = cat_features[list(cat_features.keys())[0]].shape
         cat_input_flat = {
             name: cat_features[name].view(batch_size * num_drivers)
             for name in cat_features
@@ -48,7 +52,7 @@ class DnnWOTransformer(nn.Module):
 
 
         x = torch.cat([cat_tensor_embeded, num_tensor_flat], dim=1)
-
+        #print(x.shape)
         out = self.dnn(x)
         return out.view(num_drivers, batch_size, 1)
 
