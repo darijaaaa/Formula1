@@ -30,7 +30,11 @@ class DnnWOTransformer(nn.Module):
             nn.Linear(self.hidden_dim, self.hidden_dim),
             nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
-            nn.Linear(self.hidden_dim, 1)
+            nn.Linear(self.hidden_dim, self.dim_features),
+            nn.LeakyReLU(),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(self.dim_features, 1),
+            #nn.Softmax(20, 1)
         )
 
     #ja modelu prosledjujem dict tipa {feature_name : num_of_dif_values_of_feature}, categorijske feature, i numericke feature
