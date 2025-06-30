@@ -21,27 +21,28 @@ class DnnWOTransformer(nn.Module):
         self.dropout_p = dropout_p
         # self.dnn = nn.Sequential(
         #     nn.Linear(self.dim_features, self.hidden_dim),
-        #     nn.ReLU(),
+        #     nn.LeakyReLU(),
+        #     nn.Dropout(self.dropout_p),
         #     nn.Linear(self.hidden_dim, 1)
         # )
         self.dnn = nn.Sequential(
             nn.Linear(self.dim_features, self.hidden_dim),
             nn.BatchNorm1d(self.hidden_dim),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim, self.hidden_dim*2),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim*2, self.hidden_dim*3),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim*3, self.hidden_dim),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
             nn.Linear(self.hidden_dim, self.dim_features),
-            nn.GELU(),
+            nn.LeakyReLU(),
             nn.Dropout(self.dropout_p),
-            nn.Linear(self.dim_features, 20)
+            nn.Linear(self.dim_features, 1)
             # nn.Softmax(dim=1)
         )
 
@@ -66,6 +67,6 @@ class DnnWOTransformer(nn.Module):
         x = torch.cat([cat_tensor_embeded, num_tensor_flat], dim=1)
         #print(x.shape)
         out = self.dnn(x)
-        return out.view(num_drivers, batch_size, 5)
+        return out.view(num_drivers, batch_size, 1)
 
         
