@@ -26,15 +26,17 @@ class CustomDataset(Dataset):
     def __getitem__(self, index: int):
         race_df = self.race_groups[index][1]
 
+        # dict sa vrednostima kategrijskih featurea
         x_cat_dict = {
             col: torch.tensor(race_df[col].values, dtype=torch.long).unsqueeze(1)
             for col in self.cat_columns
         }
 
+        # numericke vrednsoti i labele u tensore
         x_num = torch.tensor(race_df[self.numerical_columns].values, dtype=torch.float)
         y = torch.tensor(race_df[self.target_colname].values, dtype=torch.float)
 
-        # Dodatni podaci za ispis (drivers_num, position_quali)
+        # dodatni podaci za ispis (drivers_num, position_quali)
         drivers_num = torch.tensor(race_df['drivers_num'].values, dtype=torch.long)
         position_quali = torch.tensor(race_df['position_quali'].values, dtype=torch.long)
 
