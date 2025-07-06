@@ -44,7 +44,6 @@ class DnnWOTransformer(nn.Module):
 
     #ja modelu prosledjujem dict tipa {feature_name : num_of_dif_values_of_feature}, categorijske feature, i numericke feature
     def forward(self, cat_features, num_tensor):
-        
         num_drivers, batch_size, _  = cat_features[list(cat_features.keys())[0]].shape
         
         cat_input_flat = {
